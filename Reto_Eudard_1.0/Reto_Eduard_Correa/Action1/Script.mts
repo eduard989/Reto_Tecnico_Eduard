@@ -16,7 +16,7 @@
 
 'Declaración de Variables.
 	Dim DataDriven, Repositorio
-	Dim Url, Urlsoporte, Repo
+	Dim Url, Opcion
 
 'Se parametriza el Datadriven para que sea dinámico
 	DataDrivenPath = "\Documents\Reto_Eudard_1.0\REPOSITORIO.xls"
@@ -24,16 +24,25 @@
 
 'Se deja en una variable la URL con la que se va a trabajar
 	Url = "https://www.grupobancolombia.com/wps/portal/personas"
-
-
+	
 'Importo el DataTable
 	DataTable.Import (DataDriven)
 	
 'Se abre el navegador Google Chrome
-	SystemUtil.Run "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+	'SystemUtil.Run "chrome.exe" , Url ,,,3
+	
+	Opcion = InputBox("Escoja el Naveador"&chr(13)&chr(13)&"1. CHROME"&chr(13)&chr(13)&"2.INTERNET EXPLORER")
+	
+	If Opcion = 1 Then
+		SystemUtil.Run "chrome.exe" , Url ,,,3
+	ElseIf Opcion = 2 Then
+		SystemUtil.Run "iexplore.exe" , Url ,,,3
+	Elseif Opcion <> 1 or 2 then
+	 	InputBox ("Escoja una opción Válida")
+	 	ExitTest 
+	End If
 	
 '1. Ingreso a la opción productos y servicios y listo todas las opciones mostradas.
-	Browser("Browser").Navigate (Url)
 	Browser("Browser").Page("Personas: Soluciones Financier").Link("Productos y Servicios").Click
 		
 '2.	Ingreso a la opción Tarjetas de Crédito. 	
@@ -46,10 +55,7 @@
 	Browser("Browser").Page("Tarjeta de Crédito para").Link("Solicítala aquí").Click
 
 'Controlamos que el formulario esté disponible para empezar a diligenciar los datos.
-	Browser("Browser").Page("Solicitud Tarjeta de Crédito").Sync	
-	While Browser("Browser").Page("Solicitud Tarjeta de Crédito").Frame("Frame_3").WebElement("Cargando En este momento").GetROProperty("Visible") = True 
-	wait(1)
-	Wend
+	Browser("Browser").Page("Solicitud Tarjeta de Crédito").Frame("Frame").WebElement("Cargando En este momento").WaitProperty "Visible", False
 
 '5. Se procede con el llenado del formulario, trayendo los datos desde el Datadriven.
 	Call LlenadoDatos()	
